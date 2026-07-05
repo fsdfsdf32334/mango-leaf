@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="ระบบตรวจประเมินโรคใบมะม่วงด้วย MobileNet และ TensorFlow.js">
+    <meta name="keywords" content="มะม่วง, โรคใบมะม่วง, TensorFlow.js, MobileNet, Image Classification">
+    <meta name="author" content="Rama Nusa Bakti">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจโรคใบมะม่วง | Thai UI</title>
+    <link rel="stylesheet" href="style01.css?v=thai-ui-20260706">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="script01.js?v=thai-ui-20260706" defer></script>
+</head>
+<body>
+    <main class="app-shell">
+        <section class="hero" aria-labelledby="appTitle">
+            <div class="hero-copy">
+                <p class="eyebrow">ระบบวิเคราะห์ภาพใบมะม่วง</p>
+                <h1 id="appTitle">ตรวจโรคใบมะม่วง</h1>
+                <p class="intro">อัปโหลดภาพใบมะม่วงเพื่อประเมินอาการเบื้องต้น พร้อมดูระดับความมั่นใจของโมเดลแต่ละประเภท</p>
+            </div>
+
+            <aside class="model-card" aria-label="สถานะโมเดล">
+                <div class="status-pill" id="modelStatus">กำลังโหลดโมเดล</div>
+                <p>MobileNet</p>
+                <strong>8 กลุ่มอาการ</strong>
+            </aside>
+        </section>
+
+        <section class="workspace" aria-label="เครื่องมือตรวจโรคใบมะม่วง">
+            <section class="upload-panel" aria-labelledby="uploadTitle">
+                <div class="panel-header">
+                    <div>
+                        <p class="panel-label">ภาพตัวอย่าง</p>
+                        <h2 id="uploadTitle">เลือกภาพใบมะม่วง</h2>
+                    </div>
+                    <span class="file-badge">JPG PNG WebP</span>
+                </div>
+
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <label for="imageUpload" class="upload-button">
+                        <span class="upload-icon" aria-hidden="true"></span>
+                        <span>อัปโหลดภาพ</span>
+                    </label>
+                    <p>รองรับการลากไฟล์มาวางในพื้นที่นี้</p>
+                </div>
+
+                <div id="imageContainer" class="image-preview">
+                    <div class="empty-preview">
+                        <span class="leaf-mark" aria-hidden="true"></span>
+                        <p>ยังไม่มีภาพ</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="result-panel" aria-labelledby="resultTitle">
+                <div class="panel-header">
+                    <div>
+                        <p class="panel-label">ผลการประเมิน</p>
+                        <h2 id="resultTitle">ผลลัพธ์จากโมเดล</h2>
+                    </div>
+                    <span id="confidenceBadge" class="confidence-badge">รอภาพ</span>
+                </div>
+
+                <div class="prediction-card">
+                    <p class="prediction-caption">ผลที่เป็นไปได้มากที่สุด</p>
+                    <p id="predictionClass" class="prediction-class">รออัปโหลดภาพ</p>
+                    <p id="predictionAdvice" class="prediction-advice">เมื่อเลือกภาพแล้ว ระบบจะแสดงผลวิเคราะห์และเปอร์เซ็นต์ความมั่นใจที่นี่</p>
+                </div>
+
+                <div class="probability-header">
+                    <span>อันดับความเป็นไปได้</span>
+                    <span>ความมั่นใจ</span>
+                </div>
+                <div id="predictionResult" class="probability-list" aria-live="polite"></div>
+
+                <p class="disclaimer">ผลลัพธ์เป็นการคัดกรองจากภาพถ่าย ควรใช้ร่วมกับการสำรวจแปลงและคำแนะนำจากผู้เชี่ยวชาญ</p>
+            </section>
+        </section>
+    </main>
+</body>
+</html>
