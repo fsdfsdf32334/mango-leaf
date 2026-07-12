@@ -1,0 +1,18 @@
+{
+    "name": "Mango Leaf AI",
+    "short_name": "Mango Leaf",
+    "description": "AI Mango Disease Detection สำหรับช่วยประเมินโรคใบมะม่วงจากภาพถ่าย",
+    "start_url": "./mangoleaf.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f3f7ef",
+    "theme_color": "#17633a",
+    "icons": [
+        {
+            "src": "./pwa-icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

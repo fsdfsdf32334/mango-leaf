@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mango Leaf AI">
+  <rect width="512" height="512" rx="112" fill="#17633a"/>
+  <path d="M391 82c-135 7-248 102-281 238 99 35 231-14 285-126 20-42 22-83-4-112Z" fill="#a6d96a"/>
+  <path d="M126 318c77-58 151-112 251-214" fill="none" stroke="#ffffff" stroke-width="32" stroke-linecap="round"/>
+  <path d="M196 276c39-6 77-4 114 7M225 221c45-10 83-11 116-2" fill="none" stroke="#17633a" stroke-width="18" stroke-linecap="round" opacity=".65"/>
+</svg>

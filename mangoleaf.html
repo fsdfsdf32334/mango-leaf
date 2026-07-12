@@ -2,82 +2,281 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="ระบบตรวจประเมินโรคใบมะม่วงด้วย MobileNet และ TensorFlow.js">
-    <meta name="keywords" content="มะม่วง, โรคใบมะม่วง, TensorFlow.js, MobileNet, Image Classification">
+    <meta name="description" content="Mango Leaf AI ระบบช่วยประเมินโรคใบมะม่วงด้วยปัญญาประดิษฐ์ ทำงานบนเว็บด้วย TensorFlow.js">
+    <meta name="keywords" content="มะม่วง, โรคใบมะม่วง, TensorFlow.js, MobileNet, AI Agriculture">
     <meta name="author" content="Rama Nusa Bakti">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตรวจโรคใบมะม่วง | Thai UI</title>
-    <link rel="stylesheet" href="style01.css?v=thai-ui-20260706">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="script01.js?v=thai-ui-20260706" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#17633a">
+    <title>Mango Leaf AI | ตรวจสุขภาพใบมะม่วงด้วย AI</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="pwa-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style01.css?v=mobile-app-20260707">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.19.0/dist/tf.min.js"></script>
+    <script src="script01.js?v=model-loader-fix-20260712" defer></script>
 </head>
 <body>
-    <main class="app-shell">
-        <section class="hero" aria-labelledby="appTitle">
-            <div class="hero-copy">
-                <p class="eyebrow">ระบบวิเคราะห์ภาพใบมะม่วง</p>
-                <h1 id="appTitle">ตรวจโรคใบมะม่วง</h1>
-                <p class="intro">อัปโหลดภาพใบมะม่วงเพื่อประเมินอาการเบื้องต้น พร้อมดูระดับความมั่นใจของโมเดลแต่ละประเภท</p>
+    <a class="skip-link" href="#scanner">ข้ามไปยังส่วนตรวจโรค</a>
+
+    <header class="app-header">
+        <div class="brand" aria-label="Mango Leaf AI">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 48 48" role="img">
+                    <path d="M39.5 7.5C25.2 8.2 12.4 18.6 9 32.7c10.1 3.5 23.7-1.8 29.1-13.4 2-4.3 2.2-8.7 1.4-11.8Z"></path>
+                    <path d="M10.4 32.1c8.4-6.2 16.4-12 27.2-22.6"></path>
+                </svg>
+            </span>
+            <span>
+                <strong>Mango Leaf AI</strong>
+                <small>AI Mango Disease Detection</small>
+            </span>
+        </div>
+
+        <button class="menu-button" type="button" id="menuButton" aria-label="เปิดเมนู" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="top-nav" id="topNav" aria-label="เมนูหลัก">
+            <a href="#home">หน้าหลัก</a>
+            <a href="#scanner">ตรวจโรค</a>
+            <a href="#history">ประวัติ</a>
+            <a href="#guide">วิธีใช้งาน</a>
+            <a href="#about">เกี่ยวกับระบบ</a>
+        </nav>
+    </header>
+
+    <main id="home">
+        <section class="hero-section" aria-labelledby="heroTitle">
+            <div class="hero-content">
+                <p class="app-badge">AI-Powered Mango Disease Analysis</p>
+                <h1 id="heroTitle">ตรวจสุขภาพใบมะม่วงด้วย AI</h1>
+                <p class="hero-copy">ถ่ายภาพหรือเลือกภาพใบมะม่วง ระบบจะช่วยวิเคราะห์ลักษณะอาการและแสดงผลการประเมินภายในไม่กี่ขั้นตอน</p>
+                <div class="hero-actions">
+                    <label class="button primary" for="cameraInput">
+                        <span class="icon camera-icon" aria-hidden="true"></span>
+                        ถ่ายรูป
+                    </label>
+                    <label class="button secondary" for="galleryInput">
+                        <span class="icon image-icon" aria-hidden="true"></span>
+                        เลือกจากคลังภาพ
+                    </label>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="phone-frame">
+                    <div class="scan-card">
+                        <span class="leaf-illustration"></span>
+                        <span class="scan-line"></span>
+                    </div>
+                    <div class="metric-card">
+                        <span>AI Ready</span>
+                        <strong>8 กลุ่มอาการ</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="status-strip" aria-label="สถานะระบบ">
+            <div>
+                <span class="status-dot" id="modelDot" aria-hidden="true"></span>
+                <span id="modelStatus">กำลังโหลดโมเดล AI</span>
+            </div>
+            <button class="text-button hidden" type="button" id="retryModelButton">ลองโหลดโมเดลอีกครั้ง</button>
+        </section>
+
+        <section class="app-grid app-section" id="scanner" aria-labelledby="scannerTitle">
+            <div class="scanner-panel">
+                <div class="section-heading">
+                    <p class="eyebrow">AI Scanner</p>
+                    <h2 id="scannerTitle">ตรวจภาพใบมะม่วง</h2>
+                    <p>เลือกภาพก่อน แล้วตรวจทาน preview ให้ชัดเจน จากนั้นจึงกดวิเคราะห์ด้วย AI</p>
+                </div>
+
+                <input class="visually-hidden" type="file" id="cameraInput" accept="image/*" capture="environment">
+                <input class="visually-hidden" type="file" id="galleryInput" accept="image/*">
+
+                <div class="capture-actions" aria-label="เลือกแหล่งภาพ">
+                    <label class="choice-card" for="cameraInput">
+                        <span class="icon camera-icon" aria-hidden="true"></span>
+                        <strong>ถ่ายรูปใบมะม่วง</strong>
+                        <small>ใช้กล้องหลังเพื่อถ่ายภาพโดยตรง</small>
+                    </label>
+                    <label class="choice-card" for="galleryInput">
+                        <span class="icon image-icon" aria-hidden="true"></span>
+                        <strong>เลือกจากคลังภาพ</strong>
+                        <small>เลือกรูปที่ถ่ายไว้แล้วจากโทรศัพท์</small>
+                    </label>
+                </div>
+
+                <div class="preview-shell" id="previewShell">
+                    <div class="preview-empty" id="previewEmpty">
+                        <span class="empty-leaf" aria-hidden="true"></span>
+                        <strong>ยังไม่มีภาพสำหรับวิเคราะห์</strong>
+                        <span>ถ่ายหรือเลือกภาพใบมะม่วงเพื่อเริ่มต้น</span>
+                    </div>
+                    <img id="previewImage" class="preview-image hidden" src="" alt="ภาพใบมะม่วงที่เลือกสำหรับวิเคราะห์">
+                    <div class="scan-overlay hidden" id="scanOverlay" aria-hidden="true"></div>
+                </div>
+
+                <p class="preview-hint">เพื่อผลลัพธ์ที่ดี ควรถ่ายให้ใบมะม่วงอยู่กลางภาพและมีแสงเพียงพอ</p>
+
+                <div class="quality-box hidden" id="qualityBox" aria-live="polite"></div>
+
+                <div class="analysis-actions">
+                    <button class="button ghost" type="button" id="changeImageButton" disabled>เปลี่ยนภาพ</button>
+                    <button class="button primary" type="button" id="analyzeButton" disabled>
+                        <span class="icon spark-icon" aria-hidden="true"></span>
+                        วิเคราะห์ด้วย AI
+                    </button>
+                </div>
+
+                <div class="analysis-steps" id="analysisSteps" aria-live="polite">
+                    <span data-step="prepare">กำลังเตรียมภาพ</span>
+                    <span data-step="scan">กำลังวิเคราะห์ลักษณะใบ</span>
+                    <span data-step="score">กำลังคำนวณผลลัพธ์</span>
+                    <span data-step="done">แสดงผลสำเร็จ</span>
+                </div>
             </div>
 
-            <aside class="model-card" aria-label="สถานะโมเดล">
-                <div class="status-pill" id="modelStatus">กำลังโหลดโมเดล</div>
-                <p>MobileNet</p>
-                <strong>8 กลุ่มอาการ</strong>
+            <aside class="result-panel" aria-labelledby="resultTitle" aria-live="polite">
+                <div class="result-empty" id="resultEmpty">
+                    <p class="eyebrow">Result</p>
+                    <h2 id="resultTitle">ผลการประเมินจะแสดงที่นี่</h2>
+                    <p>ระบบนี้เป็นเครื่องมือช่วยคัดกรองจากภาพถ่าย ไม่ใช่การวินิจฉัยยืนยัน ควรใช้ร่วมกับการสำรวจแปลงและคำแนะนำจากผู้เชี่ยวชาญ</p>
+                </div>
+
+                <div class="result-card hidden" id="resultCard">
+                    <div class="result-topline">
+                        <span id="resultStatus" class="status-badge">ผลการประเมิน</span>
+                        <span id="confidenceLevel">ระดับความมั่นใจ</span>
+                    </div>
+                    <div class="gauge-wrap" aria-label="ความมั่นใจของผลอันดับหนึ่ง">
+                        <svg class="confidence-gauge" viewBox="0 0 120 120" role="img">
+                            <circle class="gauge-bg" cx="60" cy="60" r="48"></circle>
+                            <circle class="gauge-value" id="gaugeValue" cx="60" cy="60" r="48"></circle>
+                        </svg>
+                        <div class="gauge-label">
+                            <strong id="confidencePercent">0%</strong>
+                            <span>ความมั่นใจ</span>
+                        </div>
+                    </div>
+                    <p class="result-label">ผลการประเมิน</p>
+                    <h3 id="topThaiName">รอผล</h3>
+                    <p id="topEnglishName" class="english-name"></p>
+                    <p id="lowConfidenceMessage" class="low-confidence-message hidden">ระบบยังไม่มั่นใจในผลลัพธ์ กรุณาถ่ายภาพใหม่ โดยให้ใบมะม่วงอยู่กลางภาพ มีแสงเพียงพอ และพื้นหลังไม่ซับซ้อน</p>
+                </div>
+
+                <div class="prediction-panel hidden" id="predictionPanel">
+                    <div class="panel-title-row">
+                        <h3>ความเป็นไปได้สูงสุด</h3>
+                        <button class="text-button" type="button" id="togglePredictionsButton">ดูผลทั้งหมด 8 รายการ</button>
+                    </div>
+                    <div class="prediction-list" id="predictionList"></div>
+                </div>
+
+                <article class="info-panel hidden" id="infoPanel">
+                    <h3>เกี่ยวกับอาการนี้</h3>
+                    <p id="shortDescription"></p>
+                    <details class="info-accordion" open>
+                        <summary>อาการที่พบได้</summary>
+                        <ul id="symptomsList"></ul>
+                    </details>
+                    <details class="info-accordion">
+                        <summary>สิ่งที่ควรตรวจเพิ่มเติม</summary>
+                        <ul id="monitoringList"></ul>
+                    </details>
+                    <details class="info-accordion">
+                        <summary>การดูแลเบื้องต้น</summary>
+                        <ul id="preventionList"></ul>
+                    </details>
+                </article>
             </aside>
         </section>
 
-        <section class="workspace" aria-label="เครื่องมือตรวจโรคใบมะม่วง">
-            <section class="upload-panel" aria-labelledby="uploadTitle">
-                <div class="panel-header">
-                    <div>
-                        <p class="panel-label">ภาพตัวอย่าง</p>
-                        <h2 id="uploadTitle">เลือกภาพใบมะม่วง</h2>
-                    </div>
-                    <span class="file-badge">JPG PNG WebP</span>
-                </div>
+        <section class="guide-section app-section" id="guide" aria-labelledby="guideTitle">
+            <div class="section-heading">
+                <p class="eyebrow">Photo Guide</p>
+                <h2 id="guideTitle">ถ่ายอย่างไรให้ AI วิเคราะห์ได้ดีขึ้น</h2>
+            </div>
+            <div class="guide-grid">
+                <article class="guide-card">
+                    <span class="guide-icon sun-icon" aria-hidden="true"></span>
+                    <h3>แสงเพียงพอ</h3>
+                    <p>แสงธรรมชาติช่วยให้เห็นสีและจุดอาการบนใบชัดขึ้น</p>
+                </article>
+                <article class="guide-card">
+                    <span class="guide-icon focus-icon" aria-hidden="true"></span>
+                    <h3>ใบอยู่กลางภาพ</h3>
+                    <p>วางใบให้เต็มกรอบพอดีและไม่ถูกตัดขอบมากเกินไป</p>
+                </article>
+                <article class="guide-card">
+                    <span class="guide-icon detail-icon" aria-hidden="true"></span>
+                    <h3>ภาพชัด</h3>
+                    <p>ถือกล้องให้นิ่งและหลีกเลี่ยงภาพเบลอ</p>
+                </article>
+                <article class="guide-card">
+                    <span class="guide-icon clean-icon" aria-hidden="true"></span>
+                    <h3>พื้นหลังไม่ซับซ้อน</h3>
+                    <p>ช่วยให้ภาพมีรายละเอียดที่ชัดเจนมากขึ้น</p>
+                </article>
+            </div>
+        </section>
 
-                <div class="upload-zone" id="uploadZone">
-                    <input type="file" id="imageUpload" accept="image/*">
-                    <label for="imageUpload" class="upload-button">
-                        <span class="upload-icon" aria-hidden="true"></span>
-                        <span>อัปโหลดภาพ</span>
-                    </label>
-                    <p>รองรับการลากไฟล์มาวางในพื้นที่นี้</p>
+        <section class="history-section app-section" id="history" aria-labelledby="historyTitle">
+            <div class="history-heading">
+                <div class="section-heading">
+                    <p class="eyebrow">Scan History</p>
+                    <h2 id="historyTitle">ประวัติการตรวจ</h2>
+                    <p>เก็บเฉพาะวันที่ เวลา ผลอันดับหนึ่ง ความมั่นใจ และผล Top 3 ในเครื่องของผู้ใช้</p>
                 </div>
+                <button class="button danger" type="button" id="clearHistoryButton">ล้างประวัติทั้งหมด</button>
+            </div>
+            <div class="history-list" id="historyList" aria-live="polite"></div>
+        </section>
 
-                <div id="imageContainer" class="image-preview">
-                    <div class="empty-preview">
-                        <span class="leaf-mark" aria-hidden="true"></span>
-                        <p>ยังไม่มีภาพ</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="result-panel" aria-labelledby="resultTitle">
-                <div class="panel-header">
-                    <div>
-                        <p class="panel-label">ผลการประเมิน</p>
-                        <h2 id="resultTitle">ผลลัพธ์จากโมเดล</h2>
-                    </div>
-                    <span id="confidenceBadge" class="confidence-badge">รอภาพ</span>
-                </div>
-
-                <div class="prediction-card">
-                    <p class="prediction-caption">ผลที่เป็นไปได้มากที่สุด</p>
-                    <p id="predictionClass" class="prediction-class">รออัปโหลดภาพ</p>
-                    <p id="predictionAdvice" class="prediction-advice">เมื่อเลือกภาพแล้ว ระบบจะแสดงผลวิเคราะห์และเปอร์เซ็นต์ความมั่นใจที่นี่</p>
-                </div>
-
-                <div class="probability-header">
-                    <span>อันดับความเป็นไปได้</span>
-                    <span>ความมั่นใจ</span>
-                </div>
-                <div id="predictionResult" class="probability-list" aria-live="polite"></div>
-
-                <p class="disclaimer">ผลลัพธ์เป็นการคัดกรองจากภาพถ่าย ควรใช้ร่วมกับการสำรวจแปลงและคำแนะนำจากผู้เชี่ยวชาญ</p>
-            </section>
+        <section class="about-section app-section" id="about" aria-labelledby="aboutTitle">
+            <div class="section-heading">
+                <p class="eyebrow">About</p>
+                <h2 id="aboutTitle">เกี่ยวกับระบบ</h2>
+                <p>Mango Leaf AI ใช้โมเดล TensorFlow.js ที่ทำงานบนอุปกรณ์ของผู้ใช้เพื่อช่วยประเมินลักษณะภาพใบมะม่วง 8 กลุ่มอาการ ผลลัพธ์เป็นการช่วยคัดกรองจากภาพถ่าย ไม่ใช่การวินิจฉัยยืนยัน</p>
+            </div>
         </section>
     </main>
+
+    <nav class="bottom-nav" aria-label="เมนูด้านล่าง">
+        <a href="#home" data-nav-target="home"><span class="nav-home" aria-hidden="true"></span>หน้าหลัก</a>
+        <a href="#scanner" data-nav-target="scanner"><span class="nav-scan" aria-hidden="true"></span>ตรวจโรค</a>
+        <a href="#history" data-nav-target="history"><span class="nav-history" aria-hidden="true"></span>ประวัติ</a>
+        <a href="#guide" data-nav-target="guide"><span class="nav-guide" aria-hidden="true"></span>วิธีใช้</a>
+    </nav>
+
+    <div class="sticky-analyze-bar hidden" id="stickyAnalyzeBar">
+        <button class="button primary" type="button" id="stickyAnalyzeButton">
+            <span class="icon spark-icon" aria-hidden="true"></span>
+            วิเคราะห์ด้วย AI
+        </button>
+    </div>
+
+    <div class="toast-viewport" id="toastViewport" aria-live="polite" aria-atomic="true"></div>
+
+    <dialog class="history-dialog" id="historyDialog" aria-labelledby="historyDialogTitle">
+        <div class="dialog-card">
+            <button class="dialog-close" type="button" id="closeHistoryDialog" aria-label="ปิดรายละเอียด">×</button>
+            <h2 id="historyDialogTitle">รายละเอียดประวัติ</h2>
+            <div id="historyDialogContent"></div>
+        </div>
+    </dialog>
+
+    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmDialogTitle">
+        <div class="dialog-card">
+            <h2 id="confirmDialogTitle">ยืนยันการล้างประวัติ</h2>
+            <p id="confirmMessage">ต้องการล้างประวัติการตรวจทั้งหมดหรือไม่</p>
+            <div class="confirm-actions">
+                <button class="button ghost" type="button" id="confirmCancelButton">ยกเลิก</button>
+                <button class="button danger" type="button" id="confirmOkButton">ล้างประวัติ</button>
+            </div>
+        </div>
+    </dialog>
 </body>
 </html>
